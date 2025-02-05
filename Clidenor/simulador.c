@@ -58,7 +58,6 @@ int main(){
         n_bits = n_bits % num_bits;
         return (num << n_bits) | (num >> (num_bits - n_bits));
     }
-
     
 
 
