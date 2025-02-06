@@ -29,9 +29,14 @@ void decodificarInstrucao(uint16_t instrucao) {
     uint8_t modo = (instrucao >> 11) & 0x1;   // Extrai o modo (5º bit)
     uint16_t operandos = instrucao & 0x7FF;   // Extrai os operandos (11 bits restantes)
     printf("Opcode: 0x%02x Modo: 0x%02x Operandos: 0x%03x\n", opcode, modo, operandos);
-    
-    
-    /*if(opcode == 0000 & modo == 0) {
+    //uint8_t Rm = (operandos >> 5) & 0x7;
+    // Extrai Rn dos bits 4, 3 e 2
+    //uint8_t Rn = (operandos >> 2) & 0x7;
+
+    printf("Rm: 0x%03x Rn: 0x%03x\n", Registradores[operandos] & 0xE0, Registradores[operandos] & 0x1C);
+    //printf("Rm: 0x%03x Rn: 0x%03x\n", Registradores[(operandos >> 2) & 0x7], Registradores[(operandos >> 5) & 0x7]);
+
+    if(opcode == 0000 & modo == 0) {
         nop();
     }
     if(opcode == 1111 & modo == 1) {
@@ -39,25 +44,39 @@ void decodificarInstrucao(uint16_t instrucao) {
     }
     if(opcode == 0001) { //MOV
         if(modo == 1) {
-            movRegister(Registradores[(operandos >> 8) & 0x7], Registradores[(operandos >> 5) & 0x7]);
+            uint8_t rd = (operandos >> 8) & 0x7;
+            uint8_t rm = (operandos >> 5) & 0x7;
+            movRegistrador(Registradores[rd], Registradores[rm]);
         }
         else {
-            movImmediato(Registradores[operandos >> 8] & 0x7, (operandos & 0xFF));
+            
+            movImediato(Registradores[operandos >> 8] & 0x7, (operandos & 0xFF));
         }
-    }*/
+    }
     if(opcode == 0010) {
-        if(modo == 1) {
-            return;//storeRegister();
+        if(modo == 0) {
+            storeRegistrador(Registradores[(operandos >> 2) & 0x7], Registradores[(operandos >> 5) & 0x7]);
         }
         else {
             uint16_t parte_immediato = operandos & 0x700;
             uint16_t segunda_parte = operandos & 0x1F;
-            //storeimmediato(Registradores[(operandos >> 5) & 0x7], parte_immediato | segunda_parte);
-            printf("0x%03x", parte_immediato);
+            strImediato(Registradores[(operandos >> 5)] & 0x7, (parte_immediato | segunda_parte));
         }
+    } 
+    if(opcode == 0011) {
+        uint8_t rd = (operandos >> 8) & 0x7;
+        uint8_t rm = (operandos >> 8) & 0x7;
+        ldr(Registradores[rd], Registradores[rm]);
+        //Rd = endereço(Rm);
+    }
+    if(opcode == 0100) {
+        uint8_t rd = (operandos >> 8) & 0x7;
+        uint8_t rn = (operandos >> 5) & 0x7;
+        uint8_t rm = (operandos >> 2) & 0x7;
+        add(Registradores[rd], Registradores[rn], Registradores[rm]);
     }
 }
 
 int main () {
-    decodificarInstrucao(0x2A62);
+    decodificarInstrucao(0x2762);
 }
