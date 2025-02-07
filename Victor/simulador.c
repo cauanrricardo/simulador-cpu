@@ -24,7 +24,7 @@ uint16_t Pilha[TAMANHO_DA_PILHA] = {0};
     }
 } 
 */
-void decodificarInstrucao(uint16_t instrucao) {
+int decodificarInstrucao(uint16_t instrucao) {
     uint8_t opcode = (instrucao >> 12) & 0xF; // Extrai o opcode (4 bits mais significativos)
     uint8_t modo = (instrucao >> 11) & 0x1;   // Extrai o modo (5º bit)
     uint16_t operandos = instrucao & 0x7FF;   // Extrai os operandos (11 bits restantes)
@@ -45,6 +45,7 @@ void decodificarInstrucao(uint16_t instrucao) {
             uint8_t rd = (operandos >> 8) & 0x7;
             uint8_t rm = (operandos >> 5) & 0x7;
             movRegistrador(Registradores[rd], Registradores[rm]);
+            return 1;
         }
         else {
             uint8_t rd = (operandos >> 8) & 0x7;
@@ -110,10 +111,10 @@ void decodificarInstrucao(uint16_t instrucao) {
         if(zero == 0b11) {
             orr(Registradores[rm], Registradores[rn]);
         }
-        if(zero == 0b01) {
+        else if(zero == 0b01) {
             push(Registradores[rn]);
         }
-        if(zero = 0b10) {
+        else if(zero == 0b10) {
             pop(Registradores[rd]);
         }
         else {
@@ -146,10 +147,10 @@ void decodificarInstrucao(uint16_t instrucao) {
         if(zero == 0b01) {
             jeq(imediato);
         }
-        if(opcode == 0b10) {
+        if(zero == 0b10) {
             jlt(imediato);
         }
-        if(opcode == 0b11) {
+        if(zero == 0b11) {
             jgt(imediato);
         }
     }
