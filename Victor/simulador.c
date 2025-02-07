@@ -29,51 +29,107 @@ void decodificarInstrucao(uint16_t instrucao) {
     uint8_t modo = (instrucao >> 11) & 0x1;   // Extrai o modo (5º bit)
     uint16_t operandos = instrucao & 0x7FF;   // Extrai os operandos (11 bits restantes)
     printf("Opcode: 0x%02x Modo: 0x%02x Operandos: 0x%03x\n", opcode, modo, operandos);
-    //uint8_t Rm = (operandos >> 5) & 0x7;
+    uint8_t Rm = (operandos >> 5) & 0x7;
     // Extrai Rn dos bits 4, 3 e 2
-    //uint8_t Rn = (operandos >> 2) & 0x7;
+    uint8_t Rn = (operandos >> 2) & 0x7;
 
-    printf("Rm: 0x%03x Rn: 0x%03x\n", Registradores[operandos] & 0xE0, Registradores[operandos] & 0x1C);
+    printf("Rm: 0x%03x Rn: 0x%03x\n", &Registradores[Rm], Registradores[Rn]); // Pega o endereço de Registradores[Rm] e o conteúdo de Registradores[Rn]; 
     //printf("Rm: 0x%03x Rn: 0x%03x\n", Registradores[(operandos >> 2) & 0x7], Registradores[(operandos >> 5) & 0x7]);
 
-    if(opcode == 0000 & modo == 0) {
-        nop();
-    }
     if(opcode == 1111 & modo == 1) {
         return;
     }
-    if(opcode == 0001) { //MOV
+    //MOV 
+    if(opcode == 0b0001) { 
         if(modo == 1) {
             uint8_t rd = (operandos >> 8) & 0x7;
             uint8_t rm = (operandos >> 5) & 0x7;
             movRegistrador(Registradores[rd], Registradores[rm]);
         }
         else {
-            
-            movImediato(Registradores[operandos >> 8] & 0x7, (operandos & 0xFF));
+            uint8_t rd = (operandos >> 8) & 0x7;
+            uint8_t imediato = (operandos & 0xFF);
+            movImediato(Registradores[rd], imediato);
         }
     }
-    if(opcode == 0010) {
+    //STORE (STR)
+    if(opcode == 0b0010) {
         if(modo == 0) {
-            storeRegistrador(Registradores[(operandos >> 2) & 0x7], Registradores[(operandos >> 5) & 0x7]);
+            uint8_t rm = (operandos >> 2) & 0x7;
+            uint8_t rn = (operandos >> 5) & 0x7;
+            storeRegistrador(&Registradores[rm], Registradores[rn]);
         }
         else {
             uint16_t parte_immediato = operandos & 0x700;
             uint16_t segunda_parte = operandos & 0x1F;
-            strImediato(Registradores[(operandos >> 5)] & 0x7, (parte_immediato | segunda_parte));
+            strImediato(&Registradores[(operandos >> 5)] & 0x7, (parte_immediato | segunda_parte));
         }
     } 
-    if(opcode == 0011) {
+    //LOAD (LDR) 
+    if(opcode == 0b0011) {
         uint8_t rd = (operandos >> 8) & 0x7;
         uint8_t rm = (operandos >> 8) & 0x7;
-        ldr(Registradores[rd], Registradores[rm]);
+        ldr(Registradores[rd], &Registradores[rm]);
         //Rd = endereço(Rm);
     }
-    if(opcode == 0100) {
-        uint8_t rd = (operandos >> 8) & 0x7;
-        uint8_t rn = (operandos >> 5) & 0x7;
-        uint8_t rm = (operandos >> 2) & 0x7;
-        add(Registradores[rd], Registradores[rn], Registradores[rm]);
+    //Instruções da ULA
+    uint8_t rd = (operandos >> 8) & 0x7;
+    uint8_t rm = (operandos >> 5) & 0x7;
+    uint8_t rn = (operandos >> 2) & 0x7;
+    //ADD
+    if(opcode == 0b0100) {
+        add(Registradores[rd], Registradores[rm], Registradores[rn]);
+    }
+    //SUB
+    if(opcode == 0b0101) {
+        sub(Registradores[rd], Registradores[rm], Registradores[rn]);
+    }
+    //MUL
+    if(opcode == 0b0110) {
+        mul(Registradores[rd], Registradores[rm], Registradores[rn]);
+    }
+    //AND
+    if(opcode == 0b0111) {
+        and(Registradores[rd], Registradores[rm], Registradores[rn]);
+    }
+    //ORR
+    if(opcode == 0b1000) {
+        orr(Registradores[rd], Registradores[rm], Registradores[rn]);
+    }
+    //NOT
+    if(opcode == 0b1001) {
+        not(Registradores[rd], Registradores[rm]);
+    }
+    //XOR
+    if(opcode == 0b1010) {
+        xor(Registradores[rd], Registradores[rm], Registradores[rn]);
+    }
+    // CMP
+    if(opcode == 0b0000) {
+        uint8_t zero = operandos & 0x3;
+        if(zero == 0b11) {
+            orr(Registradores[rm], Registradores[rn]);
+        }
+        else {
+            nop();
+        }
+    }
+    //Shift Right (SHR)
+    uint8_t imediato = operandos & 0x1F;
+    if(opcode == 0b1011) {
+        shr(Registradores[rd], Registradores[rm], imediato);
+    }
+    //Shift Left (SHL)
+    if(opcode == 0b1100) {
+        shl(Registradores[rd], Registradores[rm], imediato);
+    }
+    //Rotate Right (ROR)
+    if(opcode == 0b1101) {
+        ror(Registradores[rd], Registradores[rm]);
+    }
+    //Rotate Left (ROL) 
+    if(opcode == 0b1110) {
+        rol(Registradores[rd], Registradores[rm]);
     }
 }
 
