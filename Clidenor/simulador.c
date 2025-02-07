@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#define memory_size 65536;
-int main(){
+
     //MOV
-    void movImediato(uint16_t *registrador, uint16_t imediato){
-        Resgistradores[*registrador] = imediato;
+    void movImediato(uint16_t registrador, uint16_t imediato){
+        Resgistradores[registrador] = imediato;
     }
 
     void movRegistrador(uint16_t r_destino, uint16_t r_origem){
@@ -61,7 +60,18 @@ int main(){
         n_bits = n_bits % num_bits;
         return (num << n_bits) | (num >> (num_bits - n_bits));
     }
+
+    void cmp(uint16_t r1, uint16_t r2){
+       uint16_t valor_r1 = registradores[r1];
+       uint16_t valor_r2 = registradores[r2];
+        if(valor_r1 == valor_r2){
+            Flags |= (1 << 0); // Z (Zero)
+        }
+        if(valor_r1 < valor_r2){
+            Flags |= (1 << 1); // S (Sing)
+    }
     
+    }
 
 
     //PILHA
@@ -114,9 +124,31 @@ int main(){
         Registradores[r_destino] = *r_origem;
     }
 
+    //DESVIO
+
+    void jmp(uint16_t Imediato){
+        PC += Imediato;
+    }
+
+    void jeq(uint16_t Imediato){
+        if(zero && !sign){
+            PC += Imediato;
+        }
+    }
+    
+    void jlt(uint16_t Imediato){
+        if(sign && !zero){
+            PC += Imediato;
+            }
+    }
+
+    void jgt(uint16_t Imediato){
+        if(!sign && !zero){
+            PC += Imediato;
+            }
+    }
 
 
-
-
-
-}
+    int main(){
+        
+    }
