@@ -28,17 +28,17 @@ void decodificarInstrucao(uint16_t instrucao) {
     uint8_t opcode = (instrucao >> 12) & 0xF; // Extrai o opcode (4 bits mais significativos)
     uint8_t modo = (instrucao >> 11) & 0x1;   // Extrai o modo (5º bit)
     uint16_t operandos = instrucao & 0x7FF;   // Extrai os operandos (11 bits restantes)
-    printf("Opcode: 0x%02x Modo: 0x%02x Operandos: 0x%03x\n", opcode, modo, operandos);
-    uint8_t Rm = (operandos >> 5) & 0x7;
+    //printf("Opcode: 0x%02x Modo: 0x%02x Operandos: 0x%03x\n", opcode, modo, operandos);
+    //uint8_t Rm = (operandos >> 5) & 0x7;
     // Extrai Rn dos bits 4, 3 e 2
-    uint8_t Rn = (operandos >> 2) & 0x7;
+    //uint8_t Rn = (operandos >> 2) & 0x7;
 
-    printf("Rm: 0x%03x Rn: 0x%03x\n", &Registradores[Rm], Registradores[Rn]); // Pega o endereço de Registradores[Rm] e o conteúdo de Registradores[Rn]; 
+    //printf("Rm: 0x%03x Rn: 0x%03x\n", &Registradores[Rm], Registradores[Rn]); // Pega o endereço de Registradores[Rm] e o conteúdo de Registradores[Rn]; 
     //printf("Rm: 0x%03x Rn: 0x%03x\n", Registradores[(operandos >> 2) & 0x7], Registradores[(operandos >> 5) & 0x7]);
 
-    if(opcode == 1111 & modo == 1) {
-        return;
-    }
+    //if(opcode == 1111 & modo == 1) {
+      //  return;
+    //}
     //MOV 
     if(opcode == 0b0001) { 
         if(modo == 1) {
@@ -104,11 +104,17 @@ void decodificarInstrucao(uint16_t instrucao) {
     if(opcode == 0b1010) {
         xor(Registradores[rd], Registradores[rm], Registradores[rn]);
     }
-    // CMP
-    if(opcode == 0b0000) {
-        uint8_t zero = operandos & 0x3;
+    // CMP & PILHA
+    uint8_t zero = operandos & 0x3;
+    if(opcode == 0b0000 && modo == 0) {
         if(zero == 0b11) {
             orr(Registradores[rm], Registradores[rn]);
+        }
+        if(zero == 0b01) {
+            push(Registradores[rn]);
+        }
+        if(zero = 0b10) {
+            pop(Registradores[rd]);
         }
         else {
             nop();
@@ -130,6 +136,22 @@ void decodificarInstrucao(uint16_t instrucao) {
     //Rotate Left (ROL) 
     if(opcode == 0b1110) {
         rol(Registradores[rd], Registradores[rm]);
+    }
+    //DESVIOS 
+    if(opcode == 0b0000 && modo == 1) {
+        uint8_t imediato = (operandos >> 2) & 0x1FF;
+        if(zero == 0b00) {
+            jmp(imediato);
+        }
+        if(zero == 0b01) {
+            jeq(imediato);
+        }
+        if(opcode == 0b10) {
+            jlt(imediato);
+        }
+        if(opcode == 0b11) {
+            jgt(imediato);
+        }
     }
 }
 
