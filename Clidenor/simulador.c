@@ -8,7 +8,7 @@
     }
 
     void movRegistrador(uint16_t r_destino, uint16_t r_origem){
-        Registradores[r_destino] = r_origem;
+        Registradores[r_destino] = r_origem; // Revisar isso aqui
     }
 
 
@@ -80,7 +80,7 @@
             printf("PILHA CHEIA!!!!!!!!!!!!, NÃO CONSIGO DAR PUSH :(\n");
             return;
         }
-        SP--; //SP decrementa depois;
+        SP--; //SP decrementa depois, pois a pilha que estamos trabalhando é full descend;
         Memoria_de_dados[SP] = Registradores[valor_registrador]; //Tá certo, só inverte a ordem
     }
 
@@ -99,12 +99,11 @@
 
     //STORE
     void str_imediato(uint16_t *r_destino, uint16_t imediato){
-        Registradores[*r_destino] = imediato; // Não é assim que se pega endereços
+        Registradores[*r_destino] = imediato; 
     }
     
     void str_registrador(uint16_t *r_destino, uint16_t r_origem){
-        Registradores[*r_destino] = r_origem; // Não é assim que se pega endereços
-    }
+        Registradores[*r_destino] = r_origem; 
 
     //NOP
     void nop(){
@@ -121,7 +120,7 @@
 
     //LOAD
     void ldr(uint16_t r_destino, uint16_t *r_origem){
-        Registradores[r_destino] = *r_origem; // Não é assim que se pega endereços;
+        Registradores[r_destino] = *r_origem; 
     }
 
     //DESVIO
