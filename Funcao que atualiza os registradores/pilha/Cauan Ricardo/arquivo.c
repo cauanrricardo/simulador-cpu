@@ -17,7 +17,6 @@ operando2: Pode ser o segundo número (registrador ou valor imediato) na mesma o
 --------
 Por exemplo, na operação de adição (ADD), os operandos seriam os dois números que estão sendo somados.
 */
-
 void atualizar_flags(int resultado, int operando1, int operando2, char tipo_operacao){
     Flags = 0;
     //flag zero (z)

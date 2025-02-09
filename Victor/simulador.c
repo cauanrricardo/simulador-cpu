@@ -17,28 +17,139 @@ uint16_t Memoria_de_dados[TAMANHO_DA_MEMORIA] = {0}; // Armazena os dados usados
 uint16_t Memoria_de_programa[TAMANHO_DA_MEMORIA] ={0}; // Armazena as instruções
 uint16_t Pilha[TAMANHO_DA_PILHA] = {0}; // Armazena os dados temporários,  como variáveis locais, endereços de retorno de funções e o contexto de execução de funções.
 
-
-/*void imprimirBinario(uint16_t valor) {
-    for (int i = 15; i >= 0; i--) {
-        printf("%d", (valor >> i) & 1);
+    //MOV
+    void movImediato(uint16_t registrador, uint16_t imediato){
+        Registradores[registrador] = imediato;
+        printf("Registradores[%02x] = %x", registrador, imediato);
     }
-} 
-*/
+
+    void movRegistrador(uint16_t r_destino, uint16_t r_origem){
+        Registradores[r_destino] = Registradores[r_origem]; // Revisar isso aqui
+    }
+    //ULA
+    void add(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
+        Registradores[r_destino] = Registradores[r_origem] + Registradores[r_origem2]; // Revisar isso aqui 
+    }
+
+    void sub(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
+       Registradores[r_destino] = Registradores[r_origem] - Regsitradores[r_origem2]; // Revisar isso aqui
+    }
+    
+    void mul(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
+        Registradores[r_destino] = Registradores[r_origem] * Registradores[r_origem2]; // Revisar isso aqui
+    }
+
+    void and(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
+        Registradores[r_destino] = Registradores[r_origem] & Registradores[r_origem2]; // Revisar isso aqui
+    }
+
+    void xor(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
+        Registradores[r_destino] = Registradores[r_origem] ^ Registradores[r_origem2]; // Revisar isso aqui
+    }
+
+    void orr(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
+        Registradores[r_destino] = Registradores[r_origem] | Registradores[r_origem2]; // Revisar isso aqui
+    }
+
+    void shr(uint16_t r_destino, uint16_t r_origem, uint16_t imediato){
+        Registradores[r_destino] = Registradores[r_origem] >> imediato; // Revisar isso aqui
+    }
+
+    void shl(uint16_t r_destino, uint16_t r_origem, uint16_t imediato){
+       Registradores[r_destino] = Registradores[r_origem] << imediato; // Revisar isso aqui
+    }
+
+    uint16_t num_bits = 16;
+    n_bits = n_bits % num_bits; // Isso tá me retornando rm; 
+
+    uint16_t ror(uint16_t num, uint16_t n_bits){ // Encurtar o código, declarando apenas uma vez 
+        return (num >> n_bits) | (num << (num_bits - n_bits)); // Não entendi a lógica
+    }
+
+    uint16_t rol (uint16_t num, uint16_t n_bits) {
+        return (num << n_bits) | (num >> (num_bits - n_bits)); //Não entendi a lógica
+    }
+
+    void cmp(uint16_t r1, uint16_t r2){
+       uint16_t valor_r1 = Registradores[r1];
+       uint16_t valor_r2 = Registradores[r2];
+        if(valor_r1 == valor_r2){
+            Flags |= (1 << 0); // Z (Zero)
+        }
+        if(valor_r1 < valor_r2){
+            Flags |= (1 << 1); // S (Sing)
+        }
+    }
+    //PILHA
+    void psh(uint16_t valor_registrador){
+        if(SP == 0){
+            printf("PILHA CHEIA!!!!!!!!!!!!, NÃO CONSIGO DAR PUSH :(\n");
+            return;
+        }
+        Memoria_de_dados[SP] = Registradores[valor_registrador]; //Tá certo, só inverte a ordem
+        SP--; //SP decrementa depois, pois a pilha que estamos trabalhando é full descend;
+    }
+    //n sei se pop ta certo :/****
+    void pop(uint16_t valor_registrador){ // Essa função é void
+        if(SP == TAMANHO_DA_MEMORIA){
+            printf("PILHA VAZIA!!!!!!!!!, NÃO CONSIGO DAR POP :( \n)"); // Faz sentido
+            return;
+        }
+        SP++; //SP incrementa antes
+        Registradores[valor_registrador] = Memoria_de_dados[SP]; // O que é esse valor? Não é assim que se pega o endereço de SP;
+    }
+    //STORE
+    void strImediato(uint16_t *r_destino, uint16_t imediato){
+        Registradores[r_destino] = imediato; 
+    }
+    
+    void strRegistrador(uint16_t *r_destino, uint16_t r_origem){
+        Registradores[r_destino] = Registradores[r_origem]; 
+    }
+    //NOP
+    void nop(){
+        printf("antes de executar o nop");
+        _asm_("nop");
+        printf("depois de executar o nop");
+    }
+    //HALT
+    void halt(){
+        printf("parando programa");
+        return;  // A função é void, não retorna nada;
+    }
+    //LOAD
+    void ldr(uint16_t r_destino, uint16_t *r_origem){
+        Registradores[r_destino] = *r_origem; 
+    }
+    //DESVIO
+    void jmp(uint16_t Imediato){
+        PC += Imediato;
+    }
+    void jeq(uint16_t Imediato){ // A gente está usando as flags em apenas uma variável, dê uma olhada no meu código (Victor)
+        if(zero && !sign){
+            PC += Imediato;
+        }
+    }
+    void jlt(uint16_t Imediato){
+        if(sign && !zero){
+            PC += Imediato;
+            }
+    }
+    void jgt(uint16_t Imediato){
+        if(!sign && !zero){
+            PC += Imediato;
+            }
+    } 
+
+
 void decodificarInstrucao(uint16_t instrucao) {
     uint8_t opcode = (instrucao >> 12) & 0xF; // Extrai o opcode (4 bits mais significativos)
     uint8_t modo = (instrucao >> 11) & 0x1;   // Extrai o modo (5º bit)
     uint16_t operandos = instrucao & 0x7FF;   // Extrai os operandos (11 bits restantes)
-    //printf("Opcode: 0x%02x Modo: 0x%02x Operandos: 0x%03x\n", opcode, modo, operandos);
-    //uint8_t Rm = (operandos >> 5) & 0x7;
-    // Extrai Rn dos bits 4, 3 e 2
-    //uint8_t Rn = (operandos >> 2) & 0x7;
-
-    //printf("Rm: 0x%03x Rn: 0x%03x\n", &Registradores[Rm], Registradores[Rn]); // Pega o endereço de Registradores[Rm] e o conteúdo de Registradores[Rn]; 
-    //printf("Rm: 0x%03x Rn: 0x%03x\n", Registradores[(operandos >> 2) & 0x7], Registradores[(operandos >> 5) & 0x7]);
 
     //MOV 
     if(opcode == 0b0001) { 
-        if(modo == 1) {
+        if(modo == 0) {
             uint8_t rd = (operandos >> 8) & 0x7;
             uint8_t rm = (operandos >> 5) & 0x7;
             movRegistrador(rd, rm);
@@ -48,13 +159,13 @@ void decodificarInstrucao(uint16_t instrucao) {
             uint8_t imediato = (operandos & 0xFF);
             movImediato(rd, imediato);
         }
-    }
+    } 
     //STORE (STR)
     if(opcode == 0b0010) {
         if(modo == 0) {
             uint8_t rm = (operandos >> 2) & 0x7;
             uint8_t rn = (operandos >> 5) & 0x7;
-            storeRegistrador(&Registradores[rm], Registradores[rn]);
+            strRegistrador(&Registradores[rm], Registradores[rn]);
         }
         else {
             uint8_t parte_immediato = operandos & 0x700;
@@ -150,36 +261,38 @@ void decodificarInstrucao(uint16_t instrucao) {
         if(zero == 0b11) {
             jgt(imediato);
         }
-    }
-}
-
+    } 
+} 
 int main () {
     FILE *arquivo;
-    char nomeArquivo[TAMANHO_DA_MEMORIA];
-    char endereco[10];
-    uint16_t instrucao;
-    printf("Digite o nome do arquivo: ");
+    char nomeArquivo[100]; // Nome do arquivo
+    uint16_t endereco, instrucao;
 
-    scanf("%99[^\n]", nomeArquivo);
+    printf("Digite o nome do arquivo: ");
+    scanf("%99s", nomeArquivo);
 
     arquivo = fopen(nomeArquivo, "r");
-
     if (arquivo == NULL) {
         printf("Erro ao abrir o arquivo!\n");
         return 1;
     }
-    while(fscanf(arquivo, ""))
+    
+    // Lê o arquivo linha por linha no formato "endereço: 0xINSTRUÇÃO"
+    while (fscanf(arquivo, "%hx: 0x%hx", &endereco, &instrucao) == 2) {
+        Memoria_de_programa[endereco / 2] = instrucao; // Divide por 2 para alinhar ao índice correto
+        printf("Endereço: 0x%04X | Instrução: 0x%04X\n", endereco, instrucao);
+    }
 
+    fclose(arquivo);
 
-
-
-
-
-
-
-
-
-
-
+    // Simulação da execução (pode ser removido depois)
+    PC = 0; // Inicia o PC no primeiro endereço
+    while (PC < TAMANHO_DA_MEMORIA && Memoria_de_programa[PC / 2] != 0x0FF8) { // 0x0FF8 pode ser uma instrução de parada
+        IR = Memoria_de_programa[PC / 2]; // Carrega a instrução no IR
+        printf("Executando instrução em 0x%04X: 0x%04X\n", PC, IR);
+        decodificarInstrucao(IR);
+        PC += 2; // Avança para a próxima instrução
+    }
+    return 0;
     decodificarInstrucao(0x1803);
 }
