@@ -7,7 +7,11 @@
         Resgistradores[registrador] = imediato;
     }
 
+<<<<<<< HEAD
     void movRegistrador(uint16_t r_destino, uint16_t Registradores[r_origem]){
+=======
+    void movRegistrador(uint16_t r_destino, uint16_t r_origem){
+>>>>>>> 405245a (teste)
         Registradores[r_destino] = Registradores[r_origem]; // Revisar isso aqui
     }
 
@@ -98,9 +102,14 @@
         Registradores[*r_destino] = imediato; 
     }
     
+<<<<<<< HEAD
     void str_registrador(uint16_t *r_destino, uint16_t Registradores[r_origem]){
         Registradores[*r_destino] = Registradores[r_origem];
     }
+=======
+    void str_registrador(uint16_t *r_destino, uint16_t r_origem){
+        Registradores[*r_destino] = r_origem; // 
+>>>>>>> 405245a (teste)
 
     //NOP
     void nop(){

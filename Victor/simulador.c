@@ -8,7 +8,7 @@
 #define TAMANHO_DA_MEMORIA 1 << 16 // O tamanho da memória é 2 elevado a quant de bits
 #define TAMANHO_DA_PILHA 16 // O tamanho da pilha é igual a quantidade de bits
 
-uint16_t Registradores[8];
+uint16_t Registrador[8];
 uint16_t PC = 0; // Inicializa o valor de PC, que vai armazenar o endereço da próxima instrução
 uint16_t IR = 0; // Inicializa o valor do IR, que vai armazenar o endereço da instrução atual
 uint16_t SP = 0x8200; // Representa o Valor inicial de SP, que vai armazenar endereço do valor que está na pilha 
@@ -18,45 +18,45 @@ uint16_t Memoria_de_programa[TAMANHO_DA_MEMORIA] ={0}; // Armazena as instruçõ
 uint16_t Pilha[TAMANHO_DA_PILHA] = {0}; // Armazena os dados temporários,  como variáveis locais, endereços de retorno de funções e o contexto de execução de funções.
 
     //MOV
-    void movImediato(uint16_t registrador, uint16_t imediato){
-        Registradores[registrador] = imediato;
-        printf("Registradores[%02x] = %x", registrador, imediato);
+    void movImediato(uint16_t registrador, uint16_t imediato) {
+     Registrador[registrador] = imediato;
+        printf(Registrador[%02x] = %x", registrador, imediato);
     }
 
     void movRegistrador(uint16_t r_destino, uint16_t r_origem){
-        Registradores[r_destino] = Registradores[r_origem]; // Revisar isso aqui
+     Registrador[r_destino] = Registrador[r_origem]; // Revisar isso aqui
     }
     //ULA
     void add(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-        Registradores[r_destino] = Registradores[r_origem] + Registradores[r_origem2]; // Revisar isso aqui 
+        Registrador[r_destino] = Registrador[r_origem] + Registrador[r_origem2]; // Revisar isso aqui 
     }
 
     void sub(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-       Registradores[r_destino] = Registradores[r_origem] - Regsitradores[r_origem2]; // Revisar isso aqui
+        Registrador[r_destino] = Registrador[r_origem] - Regitrador[r_origem2]; // Revisar isso aqui
     }
     
     void mul(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-        Registradores[r_destino] = Registradores[r_origem] * Registradores[r_origem2]; // Revisar isso aqui
+        Registrador[r_destino] = Registrador[r_origem] * Registrador[r_origem2]; // Revisar isso aqui
     }
 
     void and(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-        Registradores[r_destino] = Registradores[r_origem] & Registradores[r_origem2]; // Revisar isso aqui
+        Registrador[r_destino] = Registrador[r_origem] & Registrador[r_origem2]; // Revisar isso aqui
     }
 
     void xor(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-        Registradores[r_destino] = Registradores[r_origem] ^ Registradores[r_origem2]; // Revisar isso aqui
+        Registrador[r_destino] = Registrador[r_origem] ^ Registrador[r_origem2]; // Revisar isso aqui
     }
 
     void orr(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-        Registradores[r_destino] = Registradores[r_origem] | Registradores[r_origem2]; // Revisar isso aqui
+        Registrador[r_destino] = Registrador[r_origem] | Registrador[r_origem2]; // Revisar isso aqui
     }
 
     void shr(uint16_t r_destino, uint16_t r_origem, uint16_t imediato){
-        Registradores[r_destino] = Registradores[r_origem] >> imediato; // Revisar isso aqui
+        Registrador[r_destino] = Registrador[r_origem] >> imediato; // Revisar isso aqui
     }
 
     void shl(uint16_t r_destino, uint16_t r_origem, uint16_t imediato){
-       Registradores[r_destino] = Registradores[r_origem] << imediato; // Revisar isso aqui
+        Registrador[r_destino] = Registrador[r_origem] << imediato; // Revisar isso aqui
     }
 
     uint16_t num_bits = 16;
@@ -71,8 +71,8 @@ uint16_t Pilha[TAMANHO_DA_PILHA] = {0}; // Armazena os dados temporários,  como
     }
 
     void cmp(uint16_t r1, uint16_t r2){
-       uint16_t valor_r1 = Registradores[r1];
-       uint16_t valor_r2 = Registradores[r2];
+       uint16_t valor_r1 = Registrador[r1];
+       uint16_t valor_r2 = Registrador[r2];
         if(valor_r1 == valor_r2){
             Flags |= (1 << 0); // Z (Zero)
         }
@@ -86,7 +86,7 @@ uint16_t Pilha[TAMANHO_DA_PILHA] = {0}; // Armazena os dados temporários,  como
             printf("PILHA CHEIA!!!!!!!!!!!!, NÃO CONSIGO DAR PUSH :(\n");
             return;
         }
-        Memoria_de_dados[SP] = Registradores[valor_registrador]; //Tá certo, só inverte a ordem
+        Memoria_de_dados[SP] = Registrador[valor_registrador]; //Tá certo, só inverte a ordem
         SP--; //SP decrementa depois, pois a pilha que estamos trabalhando é full descend;
     }
     //n sei se pop ta certo :/****
@@ -96,15 +96,15 @@ uint16_t Pilha[TAMANHO_DA_PILHA] = {0}; // Armazena os dados temporários,  como
             return;
         }
         SP++; //SP incrementa antes
-        Registradores[valor_registrador] = Memoria_de_dados[SP]; // O que é esse valor? Não é assim que se pega o endereço de SP;
+     Registrador[valor_registrador] = Memoria_de_dados[SP]; // O que é esse valor? Não é assim que se pega o endereço de SP;
     }
     //STORE
     void strImediato(uint16_t *r_destino, uint16_t imediato){
-        Registradores[r_destino] = imediato; 
+     Registrador[r_destino] = imediato; 
     }
     
-    void strRegistrador(uint16_t *r_destino, uint16_t r_origem){
-        Registradores[r_destino] = Registradores[r_origem]; 
+    void Registrador(uint16_t *r_destino, uint16_t r_origem){
+     Registrador[r_destino] = Registrador[r_origem]; 
     }
     //NOP
     void nop(){
@@ -119,7 +119,7 @@ uint16_t Pilha[TAMANHO_DA_PILHA] = {0}; // Armazena os dados temporários,  como
     }
     //LOAD
     void ldr(uint16_t r_destino, uint16_t *r_origem){
-        Registradores[r_destino] = *r_origem; 
+     Registrador[r_destino] = *r_origem; 
     }
     //DESVIO
     void jmp(uint16_t Imediato){
@@ -165,7 +165,7 @@ void decodificarInstrucao(uint16_t instrucao) {
         if(modo == 0) {
             uint8_t rm = (operandos >> 2) & 0x7;
             uint8_t rn = (operandos >> 5) & 0x7;
-            strRegistrador(&Registradores[rm], Registradores[rn]);
+            strRegistrador( Registrador[rm], Registrador[rn]);
         }
         else {
             uint8_t parte_immediato = operandos & 0x700;
@@ -178,7 +178,7 @@ void decodificarInstrucao(uint16_t instrucao) {
     if(opcode == 0b0011) {
         uint8_t rd = (operandos >> 8) & 0x7;
         uint8_t rm = (operandos >> 8) & 0x7;
-        ldr(Registradores[rd], &Registradores[rm]);
+        ldr Registrador[rd],  Registrador[rm]);
         //Rd = endereço(Rm);
     }
     //Instruções da ULA
@@ -294,5 +294,4 @@ int main () {
         PC += 2; // Avança para a próxima instrução
     }
     return 0;
-    decodificarInstrucao(0x1803);
 }
