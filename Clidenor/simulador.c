@@ -7,68 +7,65 @@
         Resgistradores[registrador] = imediato;
     }
 
-    void movRegistrador(uint16_t r_destino, uint16_t r_origem){
-        Registradores[r_destino] = r_origem; // Revisar isso aqui
+    void movRegistrador(uint16_t r_destino, uint16_t Registradores[r_origem]){
+        Registradores[r_destino] = Registradores[r_origem]; // Revisar isso aqui
     }
 
 
     //ULA
-    void add(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-        Registradores[r_destino] = r_origem + r_origem2; // Revisar isso aqui 
+    void add(uint16_t r_destino, uint16_t Registradores[r_origem], uint16_t Registradores[r_origem2]){
+        Registradores[r_destino] = Registradores[r_origem] + Registradores[r_origem2]; // Revisar isso aqui 
     }
 
-    void sub(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-       Registradores[r_destino] = r_origem - r_origem2; // Revisar isso aqui
+    void sub(uint16_t r_destino, uint16_t Registradores[r_origem], uint16_t Registradores[r_origem2]){
+       Registradores[r_destino] = Registradores[r_origem] - Registradores[r_origem2]; // Revisar isso aqui
     }
     
-    void mul(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-        Registradores[r_destino] = r_origem * r_origem2; // Revisar isso aqui
+    void mul(uint16_t r_destino, uint16_t Registradores[r_origem], uint16_t Registradores[r_origem2]){
+        Registradores[r_destino] = Registradores[r_origem] * Registradores[r_origem2]; // Revisar isso aqui
     }
 
-    void div(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-        Registradores[r_destino] = r_origem / r_origem2; // Essa instrução não existe
+
+    void and(uint16_t r_destino, uint16_t Registradores[r_origem], uint16_t Registradores[r_origem2]){
+        Registradores[r_destino] = Registradores[r_origem] & Registradores[r_origem2]; // Revisar isso aqui
     }
 
-    void and(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-        Registradores[r_destino] = r_origem & r_origem2; // Revisar isso aqui
+    void xor(uint16_t r_destino, uint16_t Registradores[r_origem], uint16_t Registradores[r_origem2]){
+        Registradores[r_destino] = Registradores[r_origem] ^ Registradores[r_origem2]; // Revisar isso aqui
     }
 
-    void xor(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-        Registradores[r_destino] = r_origem ^ r_origem2; // Revisar isso aqui
+    void orr(uint16_t r_destino, uint16_t Registradores[r_origem], uint16_t Registradores[r_origem2]){
+        Registradores[r_destino] = Registradores[r_origem] | Registradores[r_origem2]; // Revisar isso aqui
     }
 
-    void orr(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-        Registradores[r_destino] = r_origem | r_origem2; // Revisar isso aqui
+    void shr(uint16_t r_destino, uint16_t Registradores[r_origem], uint16_t imediato){
+        Registradores[r_destino] = Registradores[r_origem] >> Registradores[r_origem2]; // Revisar isso aqui
     }
 
-    void shr(uint16_t r_destino, uint16_t r_origem, uint16_t imediato){
-        Registradores[r_destino] = r_origem >> r_origem2; // Revisar isso aqui
+    void shl(uint16_t r_destino, uint16_t Registradores[r_origem], uint16_t imediato){
+       Registradores[r_destino] = Registradores[r_origem] << imediato; // Revisar isso aqui
     }
 
-    void shl(uint16_t r_destino, uint16_t r_origem, uint16_t imediato){
-       Registradores[r_destino] = r_origem << imediato; // Revisar isso aqui
+    void ROR(uint8_t Rd, uint8_t Rm) {
+        uint16_t valor = Registradores[Rm];
+        uint16_t bitLSB = valor & 1; // Obtém o bit menos significativo (LSB)
+        Registradores[Rd] = (valor >> 1) | (bitLSB << 15); // Move bits e recoloca o LSB no MSB
     }
 
-    uint16_t ror(uint16_t num, uint16_t n_bits){ // Encurtar o código, declarando apenas uma vez 
-        uint16_t num_bits = 16;
-        n_bits = n_bits % num_bits; // Isso tá me retornando rm; 
-        return (num >> n_bits) | (num << (num_bits - n_bits)); // Não entendi a lógica
-    }
-
-    uint16_t rol (uint16_t num, uint16_t n_bits) {
-        uint16_t num_bits = 16;
-        n_bits = n_bits % num_bits;
-        return (num << n_bits) | (num >> (num_bits - n_bits)); //Não entendi a lógica
+    void ROL(uint8_t Rd, uint8_t Rm) {
+        uint16_t valor = Registradores[Rm];
+        uint16_t bitMSB = (valor >> 15) & 1; // Obtém o bit mais significativo (MSB)
+        Registradores[Rd] = (valor << 1) | bitMSB; // Move bits e recoloca o MSB no LSB
     }
 
     void cmp(uint16_t r1, uint16_t r2){
        uint16_t valor_r1 = registradores[r1];
        uint16_t valor_r2 = registradores[r2];
         if(valor_r1 == valor_r2){
-            Flags |= (1 << 0); // Z (Zero)
+            Flags |= (1 << 2); // Z (Zero)
         }
         if(valor_r1 < valor_r2){
-            Flags |= (1 << 1); // S (Sing)
+            Flags |= (1 << 3); // S (Sing)
     }
     
     }
@@ -80,19 +77,18 @@
             printf("PILHA CHEIA!!!!!!!!!!!!, NÃO CONSIGO DAR PUSH :(\n");
             return;
         }
-        SP--; //SP decrementa depois, pois a pilha que estamos trabalhando é full descend;
         Memoria_de_dados[SP] = Registradores[valor_registrador]; //Tá certo, só inverte a ordem
+        SP--; //SP decrementa depois, pois a pilha que estamos trabalhando é full descend;
     }
 
-    //n sei se pop ta certo :/****
-    uint16_t pop(uint16_t valor_registrador){ // Essa função é void
-        if(SP == TAMANHO_DA_MEMORIA){
-            printf("PILHA VAZIA!!!!!!!!!, NÃO CONSIGO DAR POP :( \n)"); // Faz sentido
-            return;
+
+    void pop(uint8_t Rd) {
+        if (SP < TAMANHO_DA_PILHA) { // Verifica se a pilha não está vazia
+            Registradores[Rd] = Pilha[SP]; // Rd recebe o valor no topo da pilha
+            SP++; // Move o ponteiro da pilha para baixo (decresce)
+        } else {
+            printf("Erro: Pilha ta seca seca (vazia)\n");
         }
-        uint16_t valor = Memoria_de_dados[SP]; // O que é esse valor? Não é assim que se pega o endereço de SP;
-        SP++; //SP incrementa antes
-        return valor;
     }
 
 
@@ -102,8 +98,9 @@
         Registradores[*r_destino] = imediato; 
     }
     
-    void str_registrador(uint16_t *r_destino, uint16_t r_origem){
-        Registradores[*r_destino] = r_origem; 
+    void str_registrador(uint16_t *r_destino, uint16_t Registradores[r_origem]){
+        Registradores[*r_destino] = Registradores[r_origem];
+    }
 
     //NOP
     void nop(){
@@ -114,13 +111,12 @@
 
     //HALT
     void halt(){
-        printf("parando programa");
-        return 0;  // A função é void, não retorna nada;
+        exit(0);
     }
 
     //LOAD
-    void ldr(uint16_t r_destino, uint16_t *r_origem){
-        Registradores[r_destino] = *r_origem; 
+    void ldr(uint16_t r_destino, uint16_t *Registradores[r_origem]){
+        Registradores[r_destino] = *Registradores[r_origem]; 
     }
 
     //DESVIO
