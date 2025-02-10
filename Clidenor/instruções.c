@@ -7,42 +7,42 @@
         Registrador[registrador] = imediato;
     }
 
-    void movRegistrador(uint16_t r_destino, uint16_t Registrador[r_origem]){
+    void movRegistrador(uint16_t r_destino, uint16_t r_origem){
         Registrador[r_destino] = Registrador[r_origem]; // Revisar isso aqui
     }
 
 
     //ULA
-    void add(uint16_t r_destino, uint16_t Registrador[r_origem], uint16_t Registrador[r_origem2]){
+    void add(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
         Registrador[r_destino] = Registrador[r_origem] + Registrador[r_origem2]; // Revisar isso aqui 
     }
 
-    void sub(uint16_t r_destino, uint16_t Registrador[r_origem], uint16_t Registrador[r_origem2]){
+    void sub(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
        Registrador[r_destino] = Registrador[r_origem] - Registrador[r_origem2]; // Revisar isso aqui
     }
     
-    void mul(uint16_t r_destino, uint16_t Registrador[r_origem], uint16_t Registrador[r_origem2]){
+    void mul(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
         Registrador[r_destino] = Registrador[r_origem] * Registrador[r_origem2]; // Revisar isso aqui
     }
 
 
-    void and(uint16_t r_destino, uint16_t Registrador[r_origem], uint16_t Registrador[r_origem2]){
+    void and(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
         Registrador[r_destino] = Registrador[r_origem] & Registrador[r_origem2]; // Revisar isso aqui
     }
 
-    void xor(uint16_t r_destino, uint16_t Registrador[r_origem], uint16_t Registrador[r_origem2]){
+    void xor(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
         Registrador[r_destino] = Registrador[r_origem] ^ Registrador[r_origem2]; // Revisar isso aqui
     }
 
-    void orr(uint16_t r_destino, uint16_t Registrador[r_origem], uint16_t Registrador[r_origem2]){
+    void orr(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
         Registrador[r_destino] = Registrador[r_origem] | Registrador[r_origem2]; // Revisar isso aqui
     }
 
-    void shr(uint16_t r_destino, uint16_t Registrador[r_origem], uint16_t imediato){
-        Registrador[r_destino] = Registrador[r_origem] >> Registrador[r_origem2]; // Revisar isso aqui
+    void shr(uint16_t r_destino, uint16_t r_origem, uint16_t imediato){
+        Registrador[r_destino] = Registrador[r_origem] >> imediato; // Revisar isso aqui
     }
 
-    void shl(uint16_t r_destino, uint16_t Registrador[r_origem], uint16_t imediato){
+    void shl(uint16_t r_destino, uint16_t r_origem, uint16_t imediato){
        Registrador[r_destino] = Registrador[r_origem] << imediato; // Revisar isso aqui
     }
 
@@ -59,8 +59,8 @@
     }
 
     void cmp(uint16_t r1, uint16_t r2){
-       uint16_t valor_r1 = registradores[r1];
-       uint16_t valor_r2 = registradores[r2];
+       uint16_t valor_r1 = registrador[r1];
+       uint16_t valor_r2 = registrador[r2];
         if(valor_r1 == valor_r2){
             Flags |= (1 << 2); // Z (Zero)
         }
@@ -98,7 +98,7 @@
         Registrador[*r_destino] = imediato; 
     }
     
-    void str_registrador(uint16_t *r_destino, uint16_t Registrador[r_origem]){
+    void str_registrador(uint16_t *r_destino, uint16_t r_origem){
         Registrador[*r_destino] = Registrador[r_origem];
     }
 
@@ -115,8 +115,9 @@
     }
 
     //LOAD
-    void ldr(uint16_t r_destino, uint16_t *Registrador[r_origem]){
-        Registrador[r_destino] = *Registrador[r_origem]; 
+    //ver de ldr tá certo
+    void ldr(uint16_t r_destino, uint16_t r_origem){
+        Registrador[r_destino] = Registrador[r_origem]; 
     }
 
     //DESVIO
