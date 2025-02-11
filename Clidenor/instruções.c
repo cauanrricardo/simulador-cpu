@@ -3,46 +3,46 @@
 #include <stdint.h>
 
     //MOV
-    void movImediato(uint16_t registrador, uint16_t imediato){
+    void movImediato(uint8_t registrador, uint8_t imediato){
         Registrador[registrador] = imediato;
     }
 
-    void movRegistrador(uint16_t r_destino, uint16_t r_origem){
+    void movRegistrador(uint8_t r_destino, uint8_t r_origem){
         Registrador[r_destino] = Registrador[r_origem]; // Revisar isso aqui
     }
 
 
     //ULA
-    void add(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
+    void add(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2){
         Registrador[r_destino] = Registrador[r_origem] + Registrador[r_origem2]; // Revisar isso aqui 
     }
 
-    void sub(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
+    void sub(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2){
        Registrador[r_destino] = Registrador[r_origem] - Registrador[r_origem2]; // Revisar isso aqui
     }
     
-    void mul(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
+    void mul(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2){
         Registrador[r_destino] = Registrador[r_origem] * Registrador[r_origem2]; // Revisar isso aqui
     }
 
 
-    void and(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
+    void and(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2){
         Registrador[r_destino] = Registrador[r_origem] & Registrador[r_origem2]; // Revisar isso aqui
     }
 
-    void xor(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
+    void xor(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2){
         Registrador[r_destino] = Registrador[r_origem] ^ Registrador[r_origem2]; // Revisar isso aqui
     }
 
-    void orr(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
+    void orr(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2){
         Registrador[r_destino] = Registrador[r_origem] | Registrador[r_origem2]; // Revisar isso aqui
     }
 
-    void shr(uint16_t r_destino, uint16_t r_origem, uint16_t imediato){
+    void shr(uint8_t r_destino, uint8_t r_origem, uint8_t imediato){
         Registrador[r_destino] = Registrador[r_origem] >> imediato; // Revisar isso aqui
     }
 
-    void shl(uint16_t r_destino, uint16_t r_origem, uint16_t imediato){
+    void shl(uint8_t r_destino, uint8_t r_origem, uint8_t imediato){
        Registrador[r_destino] = Registrador[r_origem] << imediato; // Revisar isso aqui
     }
 
@@ -58,7 +58,7 @@
         Registrador[Rd] = (valor << 1) | bitMSB; // Move bits e recoloca o MSB no LSB
     }
 
-    void cmp(uint16_t r1, uint16_t r2){
+    void cmp(uint8_t r1, uint8_t r2){
        uint16_t valor_r1 = registrador[r1];
        uint16_t valor_r2 = registrador[r2];
         if(valor_r1 == valor_r2){
@@ -70,9 +70,13 @@
     
     }
 
+    void not(uint8_t Rd, uint8_t Rm) {
+        Registrador[Rd] = ~Registrador[Rm];
+    }
+
 
     //PILHA
-    void psh(uint16_t valor_registrador){
+    void psh(uint8_t valor_registrador){
         if(SP == 0){
             printf("PILHA CHEIA!!!!!!!!!!!!, NÃO CONSIGO DAR PUSH :(\n");
             return;
@@ -94,11 +98,11 @@
 
 
     //STORE
-    void str_imediato(uint16_t *r_destino, uint16_t imediato){
+    void strImediato(uint8_t *r_destino, uint8_t imediato){
         Registrador[*r_destino] = imediato; 
     }
     
-    void str_registrador(uint16_t *r_destino, uint16_t r_origem){
+    void strRegistrador(uint8_t *r_destino, uint8_t r_origem){
         Registrador[*r_destino] = Registrador[r_origem];
     }
 
@@ -116,34 +120,34 @@
 
     //LOAD
     //ver de ldr tá certo
-    void ldr(uint16_t r_destino, uint16_t r_origem){
+    void ldr(uint8_t r_destino, uint8_t r_origem){
         Registrador[r_destino] = Registrador[r_origem]; 
     }
 
     //DESVIO
 
-    void jmp(uint16_t Imediato){
+    void jmp(uint8_t Imediato){
         PC += Imediato;
     }
 
     
-void jeq(uint16_t novo_endereco) {
+void jeq(uint8_t imediato) {
     if (Flags & 0x4) {          // Verifica a flag Zero (bit 3: 0x4 = 0100)
-        PC = novo_endereco;     // Atualiza PC se condição satisfeita
+        PC = imediato;     // Atualiza PC se condição satisfeita
     }
 }
 
 
-void jlt(uint16_t novo_endereco) {
+void jlt(uint8_t imediato) {
     if ((Flags & 0x1) && !(Flags & 0x4)) { // Signal (bit 0: 0x1) ativo e Zero inativo
-        PC = novo_endereco;
+        PC = imediato;
     }
 }
 
 
-void jgt(uint16_t novo_endereco) {
+void jgt(uint8_t imediato) {
     if (!(Flags & 0x1) && !(Flags & 0x4)) { // Signal e Zero inativos
-        PC = novo_endereco;
+        PC = imediato;
     }
 }
 
