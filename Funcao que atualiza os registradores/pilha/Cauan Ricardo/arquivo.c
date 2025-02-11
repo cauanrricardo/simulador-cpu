@@ -4,13 +4,7 @@
 // legenda do cauan
 /*
 imediato = é um valor constante q pode ser diretamente usado em uma operação
-ex: MOV R0, #3 = onde esse 3 o imediato
----
-destino = o parametro destino, refere - se ao registrador ou memoria q será modificado pela operação
-ex: MOV R0, #3 - onde R0 e o destino, q vai armazenar o valor 3
----
-origem1 = é o registrador q contem o valor q vai ser utilizado na operacao
-ex: ADD R2, R1, R0 - onde o R1, R0 sao as origens(valoes q vao ser somados) e o resultado sera armazenado em R2(destino
+------
 operando1: Pode ser o primeiro número (registrador ou valor imediato) em uma operação aritmética.
 -------
 operando2: Pode ser o segundo número (registrador ou valor imediato) na mesma operação.
@@ -41,53 +35,59 @@ void atualizar_flags(int resultado, int operando1, int operando2, char tipo_oper
     }
 
     // Flag carry (C)
-    if (tipo_operacao == 'A')
-    {
-        if (resultado < operando1 || resultado < operando2)
-        {
-            Flags = Flags | (1 << 0);
+    if (tipo_operacao == 'A') { // Soma
+        if ((uint32_t)operando1 + (uint32_t)operando2 > 0xFFFF) { // Faz soma com 32 bits para detectar overflow
+            Flags |= (1 << 0); // c = 1
+        } else {
+            Flags &= ~(1 << 0); // c = 0
         }
-        else
-        {
-            Flags = Flags & ~(1 << 0);
-        }
-        else if (tipo_operacao == 'S')
-        {
-            if (resultado > operando1 || resultado > operando2)
-            {
-                Flags = Flags | (1 << 0); // c = 1;
-            }
-            else
-            {
-                Flags = Flags & ~(1 << 0); // c = 0;
-            }
+    } 
+    else if (tipo_operacao == 'S') { // sub
+        if (operando1 < operando2) { // se operando1 é menor, houve "carry" (em subtração, carry significa borrow)
+            Flags |= (1 << 0); // c = 1
+        } else {
+            Flags &= ~(1 << 0); // c = 0
         }
     }
     // Flag overflow (OV)
-    if ((resultado < 0 && (operando1 > 0 && operando2 > 0)) ||
-        (resultado > 0 && (operando1 < 0 && operando2 < 0)))
-    {
-        Flags = Flags | (1 << 1); // OV = 1
-    }
-    else
-    {
-        Flags = Flags & ~(1 << 1); // OV = 0
+    if (tipo_operacao == 'A') { // Soma
+        if (((operando1 & 0x8000) == (operando2 & 0x8000)) && ((resultado & 0x8000) != (operando1 & 0x8000))) {
+            Flags |= (1 << 1); // OV = 1
+        } else {
+            Flags &= ~(1 << 1); // OV = 0
+        }
+    } 
+    else if (tipo_operacao == 'S') { // Subtração
+        if (((operando1 & 0x8000) != (operando2 & 0x8000)) && ((resultado & 0x8000) != (operando1 & 0x8000))) {
+            Flags |= (1 << 1); // OV = 1
+        } else {
+            Flags &= ~(1 << 1); // OV = 0
+        }
     }
 }
 
 void manipular_pilha(uint8_t opcode, uint16_t valor)
 {
-    if (opcode == ob01)
-    {
+    if (opcode == ob01) {
+        if (SP == 0) {
+            printf("pilha cheia, nao da pra dar push.\n");
+            return;
+        }
         // empurra para a pilha (sp), entao diminiu o ponteiro da pilha
-        Memoria_de_dados[SP] = valor;
-        SP = SP - 2;
+        SP--;
+        Memoria_de_dados[SP] = Registradores[registrador];
+       // printf("PUSH: Registrador R%d -> Memória[0x%X] = 0x%X\n", registrador, SP, Registradores[registrador]);
     }
-    else if (opcode == POP)
-    {
-        // retirar da pilha, ou sej,a, aumenta o ponteiro de pilha
-        SP = SP + 2;
+    else if (opcode == 0b10){
+        if (SP == TAMANHO_DA_MEMORIA){
+            printf("pilha vazia, nao é possivel dar o POP\n");
+            return;
+        }
+        Registradores[registrador] = Memoria_de_dados[SP];
+        SP++;
+        // retirar da pilha, ou seja, aumenta o ponteiro de pilha
         valor = Memoria_de_dados[SP];
+       // printf("POP: Memória[0x%X] -> Registrador R%d = 0x%X\n", SP, registrador, Registradores[registrador]);
     }
 }
 
