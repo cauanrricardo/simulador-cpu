@@ -16,132 +16,125 @@ uint8_t Flags = 0; // 0000, representa as flags Carry, Overflow, Zero, Signal re
 uint16_t Memoria_de_dados[TAMANHO_DA_MEMORIA] = {0}; // Armazena os dados usados e manipulados durante a execução do programa.
 uint16_t Memoria_de_programa[TAMANHO_DA_MEMORIA] ={0}; // Armazena as instruções
 uint16_t Pilha[TAMANHO_DA_PILHA] = {0}; // Armazena os dados temporários,  como variáveis locais, endereços de retorno de funções e o contexto de execução de funções.
-
     //MOV
-    void movImediato(uint16_t registrador, uint16_t imediato) {
-     Registrador[registrador] = imediato;
-        printf(Registrador[%02x] = %x", registrador, imediato);
+void movImediato(uint8_t registrador, uint8_t imediato){
+    Registrador[registrador] = imediato;
+}
+void movRegistrador(uint8_t r_destino, uint8_t r_origem){
+    Registrador[r_destino] = Registrador[r_origem]; // Revisar isso aqui
+}
+//ULA
+void add(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2){
+    Registrador[r_destino] = Registrador[r_origem] + Registrador[r_origem2]; // Revisar isso aqui 
+}
+void sub(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2){
+    Registrador[r_destino] = Registrador[r_origem] - Registrador[r_origem2]; // Revisar isso aqui
+}
+void mul(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2){
+    Registrador[r_destino] = Registrador[r_origem] * Registrador[r_origem2]; // Revisar isso aqui
+}
+void and(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2){
+    Registrador[r_destino] = Registrador[r_origem] & Registrador[r_origem2]; // Revisar isso aqui
+}
+void xor(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2){
+    Registrador[r_destino] = Registrador[r_origem] ^ Registrador[r_origem2]; // Revisar isso aqui
+}
+void orr(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2){
+    Registrador[r_destino] = Registrador[r_origem] | Registrador[r_origem2]; // Revisar isso aqui
+}
+void shr(uint8_t r_destino, uint8_t r_origem, uint8_t imediato){
+    Registrador[r_destino] = Registrador[r_origem] >> imediato; // Revisar isso aqui
+}
+void shl(uint8_t r_destino, uint8_t r_origem, uint8_t imediato){
+    Registrador[r_destino] = Registrador[r_origem] << imediato; // Revisar isso aqui
+}
+void ror(uint8_t Rd, uint8_t Rm) {
+    uint16_t valor = Registrador[Rm];
+    uint16_t bitLSB = valor & 1; // Obtém o bit menos significativo (LSB)
+    Registrador[Rd] = (valor >> 1) | (bitLSB << 15); // Move bits e recoloca o LSB no MSB
+}
+void rol(uint8_t Rd, uint8_t Rm) {
+    uint16_t valor = Registrador[Rm];
+    uint16_t bitMSB = (valor >> 15) & 1; // Obtém o bit mais significativo (MSB)
+    Registrador[Rd] = (valor << 1) | bitMSB; // Move bits e recoloca o MSB no LSB
+}
+void cmp(uint8_t r1, uint8_t r2){
+    uint16_t valor_r1 = registrador[r1];
+    uint16_t valor_r2 = registrador[r2];
+    if(valor_r1 == valor_r2){
+        Flags |= (1 << 2); // Z (Zero)
     }
+    if(valor_r1 < valor_r2){
+        Flags |= (1 << 3); // S (Sing)
+    }
+}
+void not(uint8_t Rd, uint8_t Rm) {
+    Registrador[Rd] = ~Registrador[Rm];
+}
+//PILHA
+void psh(uint8_t valor_registrador){
+    if(SP == 0){
+        printf("PILHA CHEIA!!!!!!!!!!!!, NÃO CONSIGO DAR PUSH :(\n");
+        return;
+    }
+    Memoria_de_dados[SP] = Registrador[valor_registrador]; //Tá certo, só inverte a ordem
+    SP--; //SP decrementa depois, pois a pilha que estamos trabalhando é full descend;
+}
+void pop(uint8_t Rd) {
+    if (SP < TAMANHO_DA_PILHA) { // Verifica se a pilha não está vazia
+        Registrador[Rd] = Pilha[SP]; // Rd recebe o valor no topo da pilha
+        SP++; // Move o ponteiro da pilha para baixo (decresce)
+    } else {
+        printf("Erro: Pilha ta seca seca (vazia)\n");
+    }
+}
+//STORE
+void strImediato(uint8_t *r_destino, uint8_t imediato){
+    Registrador[*r_destino] = imediato; 
+}
 
-    void movRegistrador(uint16_t r_destino, uint16_t r_origem){
-     Registrador[r_destino] = Registrador[r_origem]; // Revisar isso aqui
-    }
-    //ULA
-    void add(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-        Registrador[r_destino] = Registrador[r_origem] + Registrador[r_origem2]; // Revisar isso aqui 
-    }
+void strRegistrador(uint8_t *r_destino, uint8_t r_origem){
+    Registrador[*r_destino] = Registrador[r_origem];
+}
 
-    void sub(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-        Registrador[r_destino] = Registrador[r_origem] - Regitrador[r_origem2]; // Revisar isso aqui
-    }
-    
-    void mul(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-        Registrador[r_destino] = Registrador[r_origem] * Registrador[r_origem2]; // Revisar isso aqui
-    }
+//NOP
+void nop(){
+    printf("antes de executar o nop");
+    _asm_("nop");
+    printf("depois de executar o nop");
+}
 
-    void and(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-        Registrador[r_destino] = Registrador[r_origem] & Registrador[r_origem2]; // Revisar isso aqui
-    }
+//HALT
+void halt(){
+    exit(0);
+}
 
-    void xor(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-        Registrador[r_destino] = Registrador[r_origem] ^ Registrador[r_origem2]; // Revisar isso aqui
-    }
+//LOAD
+//ver de ldr tá certo
+void ldr(uint8_t r_destino, uint8_t r_origem){
+    Registrador[r_destino] = Registrador[r_origem]; 
+}
 
-    void orr(uint16_t r_destino, uint16_t r_origem, uint16_t r_origem2){
-        Registrador[r_destino] = Registrador[r_origem] | Registrador[r_origem2]; // Revisar isso aqui
-    }
+//DESVIO
 
-    void shr(uint16_t r_destino, uint16_t r_origem, uint16_t imediato){
-        Registrador[r_destino] = Registrador[r_origem] >> imediato; // Revisar isso aqui
+void jmp(uint8_t Imediato){
+    PC += Imediato;
+}
+void jeq(uint8_t imediato) {
+    if (Flags & 0x4) {          // Verifica a flag Zero (bit 3: 0x4 = 0100)
+        PC = imediato;     // Atualiza PC se condição satisfeita
     }
-
-    void shl(uint16_t r_destino, uint16_t r_origem, uint16_t imediato){
-        Registrador[r_destino] = Registrador[r_origem] << imediato; // Revisar isso aqui
+}
+void jlt(uint8_t imediato) {
+    if ((Flags & 0x1) && !(Flags & 0x4)) { // Signal (bit 0: 0x1) ativo e Zero inativo
+        PC = imediato;
     }
-
-    uint16_t num_bits = 16;
-    n_bits = n_bits % num_bits; // Isso tá me retornando rm; 
-
-    uint16_t ror(uint16_t num, uint16_t n_bits){ // Encurtar o código, declarando apenas uma vez 
-        return (num >> n_bits) | (num << (num_bits - n_bits)); // Não entendi a lógica
+}
+void jgt(uint8_t imediato) {
+    if (!(Flags & 0x1) && !(Flags & 0x4)) { // Signal e Zero inativos
+        PC = imediato;
     }
-
-    uint16_t rol (uint16_t num, uint16_t n_bits) {
-        return (num << n_bits) | (num >> (num_bits - n_bits)); //Não entendi a lógica
-    }
-
-    void cmp(uint16_t r1, uint16_t r2){
-       uint16_t valor_r1 = Registrador[r1];
-       uint16_t valor_r2 = Registrador[r2];
-        if(valor_r1 == valor_r2){
-            Flags |= (1 << 0); // Z (Zero)
-        }
-        if(valor_r1 < valor_r2){
-            Flags |= (1 << 1); // S (Sing)
-        }
-    }
-    //PILHA
-    void psh(uint16_t valor_registrador){
-        if(SP == 0){
-            printf("PILHA CHEIA!!!!!!!!!!!!, NÃO CONSIGO DAR PUSH :(\n");
-            return;
-        }
-        Memoria_de_dados[SP] = Registrador[valor_registrador]; //Tá certo, só inverte a ordem
-        SP--; //SP decrementa depois, pois a pilha que estamos trabalhando é full descend;
-    }
-    //n sei se pop ta certo :/****
-    void pop(uint16_t valor_registrador){ // Essa função é void
-        if(SP == TAMANHO_DA_MEMORIA){
-            printf("PILHA VAZIA!!!!!!!!!, NÃO CONSIGO DAR POP :( \n)"); // Faz sentido
-            return;
-        }
-        SP++; //SP incrementa antes
-     Registrador[valor_registrador] = Memoria_de_dados[SP]; // O que é esse valor? Não é assim que se pega o endereço de SP;
-    }
-    //STORE
-    void strImediato(uint16_t *r_destino, uint16_t imediato){
-     Registrador[r_destino] = imediato; 
-    }
-    
-    void Registrador(uint16_t *r_destino, uint16_t r_origem){
-     Registrador[r_destino] = Registrador[r_origem]; 
-    }
-    //NOP
-    void nop(){
-        printf("antes de executar o nop");
-        _asm_("nop");
-        printf("depois de executar o nop");
-    }
-    //HALT
-    void halt(){
-        printf("parando programa");
-        return;  // A função é void, não retorna nada;
-    }
-    //LOAD
-    void ldr(uint16_t r_destino, uint16_t *r_origem){
-     Registrador[r_destino] = *r_origem; 
-    }
-    //DESVIO
-    void jmp(uint16_t Imediato){
-        PC += Imediato;
-    }
-    void jeq(uint16_t Imediato){ // A gente está usando as flags em apenas uma variável, dê uma olhada no meu código (Victor)
-        if(zero && !sign){
-            PC += Imediato;
-        }
-    }
-    void jlt(uint16_t Imediato){
-        if(sign && !zero){
-            PC += Imediato;
-            }
-    }
-    void jgt(uint16_t Imediato){
-        if(!sign && !zero){
-            PC += Imediato;
-            }
-    } 
-
-
+}
 void decodificarInstrucao(uint16_t instrucao) {
     uint8_t opcode = (instrucao >> 12) & 0xF; // Extrai o opcode (4 bits mais significativos)
     uint8_t modo = (instrucao >> 11) & 0x1;   // Extrai o modo (5º bit)

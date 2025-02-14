@@ -66,7 +66,7 @@ void atualizar_flags(int resultado, int operando1, int operando2, char tipo_oper
     }
 }
 
-void manipular_pilha(uint8_t opcode, uint16_t valor)
+/*void manipular_pilha(uint8_t opcode, uint16_t valor)
 {
     if (opcode == ob01) {
         if (SP == 0) {
@@ -78,6 +78,7 @@ void manipular_pilha(uint8_t opcode, uint16_t valor)
         Memoria_de_dados[SP] = Registradores[registrador];
        // printf("PUSH: Registrador R%d -> Memória[0x%X] = 0x%X\n", registrador, SP, Registradores[registrador]);
     }
+       ------------------
     else if (opcode == 0b10){
         if (SP == TAMANHO_DA_MEMORIA){
             printf("pilha vazia, nao é possivel dar o POP\n");
@@ -89,7 +90,7 @@ void manipular_pilha(uint8_t opcode, uint16_t valor)
         valor = Memoria_de_dados[SP];
        // printf("POP: Memória[0x%X] -> Registrador R%d = 0x%X\n", SP, registrador, Registradores[registrador]);
     }
-}
+}*/
 
 int main()
 {

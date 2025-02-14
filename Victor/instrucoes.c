@@ -8,6 +8,64 @@
 #define TAMANHO_DA_MEMORIA 1 << 16 // O tamanho da memória é 2 elevado a quant de bits
 #define TAMANHO_DA_PILHA 16 // O tamanho da pilha é igual a quantidade de bits
 
+///////////////////////////////////////////////
+uint8_t ram64kx8[TAM_RAM]; // memoria de dados
+uint8_t rom64kx8[TAM_ROM]; // memoria de program
+
+uint16_t ler_memoria(uint8_t Memoria_de_programa[], uint16_t address)
+{
+    uint16_t addr = address & 0xFFFE; //forca endereco par
+
+    uint8_t byte0 = Memoria_de_programa[addr];
+    uint8_t byte1 = Memoria_de_programa[addr + 1];
+
+    return ((uint16)byte1<<8) & ((uint16)byte0);
+}
+
+void escrever_byte_memoria(uint8_t Memoria_de_programa[], uint16_t address, uint8_t data)
+{
+    mem[addr] = data;
+}
+
+void escrever_half_memoria(uint8_t Memoria_de_dados[], uint16_t address, uint16_t data)
+{
+    uint8_t byte0 = (uint8_t)(data & 0x00ff);
+    uint8_t byte1 = (uint8_t)((data & 0xff00) >> 8);
+
+    escrever_byte_memoria(mem,address, byte0);
+    escrever_byte_memoria(mem,(address + 1), byte1);
+}
+
+
+uint16_t ler_ram(uint16_t address)
+{
+    return ler_memoria(ram64kx8, address);
+}
+
+uint16_t ler_rom(uint16_t address)
+{
+    return ler_memoria(rom64kx8,address);
+}
+
+void busca()
+{
+    IR = ler_memoria(rom64kx8, PC);
+    PC = PC + 2; 
+}
+
+void push(uint16_t data)
+{
+    escrever_half_memoria(ram64kx8,SP,data);
+    SP = SP - 2;
+}
+void pop()
+{
+    SP = SP + 2;
+    return ler_memoria(ram64kx8,SP);
+}
+
+/////////////////////////////////////////////////////
+
 uint16_t Registrador[8];
 uint16_t PC = 0; // Inicializa o valor de PC, que vai armazenar o endereço da próxima instrução
 uint16_t IR = 0; // Inicializa o valor do IR, que vai armazenar o endereço da instrução atual
@@ -17,13 +75,10 @@ uint16_t Memoria_de_dados[TAMANHO_DA_MEMORIA] = {0}; // Armazena os dados usados
 uint16_t Memoria_de_programa[TAMANHO_DA_MEMORIA] ={0}; // Armazena as instruções
 uint16_t Pilha[TAMANHO_DA_PILHA] = {0}; // Armazena os dados temporários,  como variáveis locais, endereços de retorno de funções e o contexto de execução de funções.
 
-    #include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-
     //MOV
     void movImediato(uint16_t registrador, uint16_t imediato){
         Registrador[registrador] = imediato;
+        printf("MOV R[%02x], #%04x\n", registrador, Registrador[registrador]);
     }
 
     void movRegistrador(uint16_t r_destino, uint16_t r_origem){
@@ -295,7 +350,7 @@ int main () {
     char nomeArquivo[100]; // Nome do arquivo
     uint16_t endereco, instrucao;
 
-    printf("Digite o nome do arquivo: ");
+    printf("Digite o path do arquivo: ");
     scanf("%99s", nomeArquivo);
 
     arquivo = fopen(nomeArquivo, "r");
@@ -306,8 +361,13 @@ int main () {
     
     // Lê o arquivo linha por linha no formato "endereço: 0xINSTRUÇÃO"
     while (fscanf(arquivo, "%hx: 0x%hx", &endereco, &instrucao) == 2) {
-        Memoria_de_programa[endereco / 2] = instrucao; // Divide por 2 para alinhar ao índice correto
-        printf("Endereço: 0x%04X | Instrução: 0x%04X\n", endereco, instrucao);
+        /*uint8_t primeira_parte_endereco = (endereco >> 8) & 0x15;
+        uint8_t segunda_parte_endereco = endereco & 0x15;
+        uint8_t primeira_parte_instrucao = instrucao >> 8 & 0x15;
+        uint8_t segunda_parte_instrucao = instrucao & 0x15;
+        Memoria_de_programa[primeira_parte_endereco] = primeira_parte_instrucao;
+        Memoria_de_programa[segunda_parte_endereco] = segunda_parte_instrucao; // Divide por 2 para alinhar ao índice correto*/
+        printf("Primeira parte Endereco: 0x%04X, Segunda parte Endereco: 0x%04X | Primeira parte da Instrucao: 0x%04X, Segunda parte da Instrucao: 0x%04x\n", primeira_parte_endereco, segunda_parte_endereco, primeira_parte_instrucao, segunda_parte_instrucao);
     }
     
     fclose(arquivo);
@@ -315,10 +375,14 @@ int main () {
     // Simulação da execução (pode ser removido depois)
     PC = 0; // Inicia o PC no primeiro endereço
     while (PC < TAMANHO_DA_MEMORIA && Memoria_de_programa[PC / 2] != 0x0FF8) { // 0x0FF8 pode ser uma instrução de parada
-        IR = Memoria_de_programa[PC / 2]; // Carrega a instrução no IR
-        printf("Executando instrução em 0x%04X: 0x%04X\n", PC, IR);
-        decodificarInstrucao(IR);
         PC += 2; // Avança para a próxima instrução
+        IR = Memoria_de_programa[PC]; // Carrega a instrução no IR
+        printf("Executando instrucao em 0x%04X: 0x%04X\n", PC, IR);
+        decodificarInstrucao(IR);
     }
+    /*printf("%hu", sizeof(uint16_t)  1* + &Registrador); */
+    /*uint16_t *ponteir = 0;
+    ponteir = &Registrador[1];
+    printf("%x", ponteir); */
     return 0;
 }
