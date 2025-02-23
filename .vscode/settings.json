@@ -2,6 +2,16 @@
     "C_Cpp.errorSquiggles": "disabled",
     "files.associations": {
         "math.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "desvio.h": "c",
+        "ula.h": "c",
+        "pilha.h": "c",
+        "inttypes.h": "c",
+        "mov.h": "c",
+        "nop_halt.h": "c",
+        "store_load.h": "c",
+        "decodificacao.h": "c",
+        "globais.h": "c",
+        "stdint.h": "c"
     }
 }

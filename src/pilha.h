@@ -1,3 +1,5 @@
+#include "../src/globais.h"
+
 //PILHA
 void psh(uint8_t valor_registrador) {
     if(SP == 0){
