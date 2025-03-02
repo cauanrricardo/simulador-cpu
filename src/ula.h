@@ -2,9 +2,9 @@
 
 //ULA
 void add(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2) {
-    printf("Registrador[%02x] = %04x + %04x\n", r_destino, Registrador[r_origem], Registrador[r_origem2]);
+    printf("Registrador[%02x] = Registrador[%02x] + Registrador[%02x]\n", r_destino, r_origem, r_origem2);
     Registrador[r_destino] = Registrador[r_origem] + Registrador[r_origem2];
-    atualizar_flags(Registrador[r_destino]);
+    atualizar_flags_zero_signal(Registrador[r_destino]);
     if((Flags & 0x1) == 1) { // Verifica se a flag Signal é igual a 1 (número negativo);
         printf("Valor final em complemento 2 = %04x\n", Registrador[r_destino]);
      }
@@ -17,7 +17,7 @@ void add(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2) {
 void sub(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2) {
     printf("Registrador[%02x] = %04x - %04x\n", r_destino, Registrador[r_origem], Registrador[r_origem2]);
     Registrador[r_destino] = Registrador[r_origem] - Registrador[r_origem2]; 
-    atualizar_flags(Registrador[r_destino]);
+    atualizar_flags_zero_signal(Registrador[r_destino]);
     if((Flags & 0x1) == 1) { // Verifica se a flag Signal é igual a 1 (número negativo);
        printf("Valor final em complemento 2 = %04x\n", Registrador[r_destino]);
     }
@@ -29,7 +29,7 @@ void sub(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2) {
 void mul(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2) {
     printf("Registrador[%02x] = %04x * %04x\n", r_destino, Registrador[r_origem], Registrador[r_origem2]);
     Registrador[r_destino] = Registrador[r_origem] * Registrador[r_origem2];
-    atualizar_flags(Registrador[r_destino]);
+    atualizar_flags_zero_signal(Registrador[r_destino]);
     if((Flags & 0x1) == 1) { // Verifica se a flag Signal é igual a 1 (número negativo);
         printf("Valor final em complemento 2 = %04x\n", Registrador[r_destino]);
     }

@@ -1,6 +1,6 @@
 #include "../src/globais.h"
 
-void atualizar_flags(uint16_t resultado) {
+void atualizar_flags_zero_signal(uint16_t resultado) {
     // flag zero (z)
     if (resultado == 0) {
         Flags = Flags | (1 << 4); // z == 1

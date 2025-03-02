@@ -3,7 +3,7 @@
 //STORE
 void strImediato(uint8_t r_destino, uint8_t imediato){
     Memoria_de_dados[Registrador[r_destino]] = imediato;
-    printf("Memoria_de_dados[Registrador[rm]] = %02x\n", Memoria_de_dados[0]);
+    printf("Memoria_de_dados[%02x] = %02x\n", Registrador[r_destino], Memoria_de_dados[0]);
 }
 
 void strRegistrador(uint8_t r_destino, uint8_t r_origem){
