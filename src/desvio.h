@@ -1,20 +1,24 @@
-//DESVIOS
+#include "../src/globais.h"
 
-void jmp(uint8_t Imediato){
-    PC += Imediato;
+// DESVIOS
+void jmp(uint16_t imediato) {
+    PC = imediato; // Desvio absoluto
 }
-void jeq(uint8_t imediato) {
-    if (Flags & 0x4) {          // Verifica a flag Zero (bit 3: 0x4 = 0100)
-        PC = imediato;     // Atualiza PC se condição satisfeita
+
+void jeq(uint16_t imediato) {
+    if (Flags & 0x2) { // Verifica a flag Zero (bit 1: 0x2 = 0010)
+        PC = imediato; // Desvio absoluto
     }
 }
-void jlt(uint8_t imediato) {
-    if ((Flags & 0x1) && !(Flags & 0x4)) { // Signal (bit 0: 0x1) ativo e Zero inativo
-        PC = imediato;
+
+void jlt(uint16_t imediato) {
+    if ((Flags & 0x1) && !(Flags & 0x2)) { // Signal (bit 0: 0x1) ativo e Zero (bit 1: 0x2) inativo
+        PC = imediato; // Desvio absoluto
     }
 }
-void jgt(uint8_t imediato) {
-    if (!(Flags & 0x1) && !(Flags & 0x4)) { // Signal e Zero inativos
-        PC = imediato;
+
+void jgt(uint16_t imediato) {
+    if (!(Flags & 0x1) && !(Flags & 0x2)) { // Signal (bit 0: 0x1) e Zero (bit 1: 0x2) inativos
+        PC = imediato; // Desvio absoluto
     }
 }

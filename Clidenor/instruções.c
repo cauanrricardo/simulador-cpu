@@ -32,7 +32,7 @@ void statusSimulador(){
 
     printf("\n");
     printf("Flags:\n");
-    printf("Carry = %x \n Overflow = %x \n Zero = %x \n Signed = %x", Flags & 0x1, (Flags >> 1) & 0x1, (Flags >> 2) & 0x1, (Flags >> 3) & 0x1);
+    printf("Carry = %x \n Overflow = %x \n Zero = %x \n Signed = %x", (Flags >> 3) & 0x1, (Flags >> 2) & 0x1, (Flags >> 1) & 0x1, (Flags & 0x1));
 }
 
     //MOV
