@@ -2,26 +2,40 @@
 
 //ULA
 void add(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2) {
+    printf("Registrador[%02x] = %04x + %04x\n", r_destino, Registrador[r_origem], Registrador[r_origem2]);
     Registrador[r_destino] = Registrador[r_origem] + Registrador[r_origem2];
-    printf("Registrador[%02x] = %02x + %02x, valor final = %02x\n", r_destino, Registrador[r_origem], Registrador[r_origem2]
-                                                                , Registrador[r_destino]);
+    atualizar_flags(Registrador[r_destino]);
+    if((Flags & 0x1) == 1) { // Verifica se a flag Signal é igual a 1 (número negativo);
+        printf("Valor final em complemento 2 = %04x\n", Registrador[r_destino]);
+     }
+     else {
+        printf("Valor final: %04x\n",  Registrador[r_destino]);
+     }
+     atualizar_flags(Registrador[r_destino]);
 }
 
 void sub(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2) {
-   Registrador[r_destino] = Registrador[r_origem] - Registrador[r_origem2]; 
-   if(Registrador[r_destino] <= 0xffff) {
-    printf("Registrador[%02x] = %02x - %02x, valor final em complemento 2 = %02x", r_destino, Registrador[r_origem], Registrador[r_origem2], Registrador[r_destino]);
-   }
-   else {
-    printf("Registrador[%02x] = %02x - %02x, valor final = %02x", r_destino, Registrador[r_origem], Registrador[r_origem2], Registrador[r_destino]);
-   }
-
+    printf("Registrador[%02x] = %04x - %04x\n", r_destino, Registrador[r_origem], Registrador[r_origem2]);
+    Registrador[r_destino] = Registrador[r_origem] - Registrador[r_origem2]; 
+    atualizar_flags(Registrador[r_destino]);
+    if((Flags & 0x1) == 1) { // Verifica se a flag Signal é igual a 1 (número negativo);
+       printf("Valor final em complemento 2 = %04x\n", Registrador[r_destino]);
+    }
+    else {
+       printf("Valor final: %04x\n",  Registrador[r_destino]);
+    }
 }
 
 void mul(uint8_t r_destino, uint8_t r_origem, uint8_t r_origem2) {
-    Registrador[r_destino] = Registrador[r_origem] * Registrador[r_origem2]; // Revisar isso aqui
-    printf("Registrador[%02x] = %02x * %02x, valor final = %02x", r_destino, Registrador[r_origem], Registrador[r_origem2], Registrador[r_destino]);
-
+    printf("Registrador[%02x] = %04x * %04x\n", r_destino, Registrador[r_origem], Registrador[r_origem2]);
+    Registrador[r_destino] = Registrador[r_origem] * Registrador[r_origem2];
+    atualizar_flags(Registrador[r_destino]);
+    if((Flags & 0x1) == 1) { // Verifica se a flag Signal é igual a 1 (número negativo);
+        printf("Valor final em complemento 2 = %04x\n", Registrador[r_destino]);
+    }
+    else {
+        printf("Valor final: %04x\n",  Registrador[r_destino]);
+    }
 }
 
 

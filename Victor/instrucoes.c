@@ -13,6 +13,7 @@
 #include "../src/decodificacao.h"
 #include "../src/globais.c"
 #include "../src/globais.h"
+#include "../src/flags.h"
 
 /*#define TAMANHO_DA_MEMORIA 1 << 16 // O tamanho da memória é 2 elevado a quant de bits
 #define TAMANHO_DA_PILHA 16 // O tamanho da pilha é igual a quantidade de bits

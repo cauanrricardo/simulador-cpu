@@ -10,7 +10,7 @@ extern uint16_t Registrador[8];
 extern uint16_t PC;
 extern uint16_t IR;
 extern uint16_t SP;
-extern uint8_t Flags; // representa as flags Carry, Overflow, Zero, Signal respectivamente
+extern uint16_t Flags; // representa as flags Carry, Overflow, Zero, Signal respectivamente
 
 // Como as funções de memória trabalham com bytes, defina as memórias como uint8_t:
 extern uint8_t Memoria_de_dados[TAMANHO_DA_MEMORIA];

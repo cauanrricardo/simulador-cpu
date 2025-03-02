@@ -30,14 +30,14 @@ void statusSimulador(){
 
     printf("\n");
     printf("Flags:\n");
-    printf("Carry = %x \n Overflow = %x \n Zero = %x \n Signed = %x", (Flags >> 3) & 0x1, (Flags >> 2) & 0x1, (Flags >> 1) & 0x1, (Flags & 0x1));
+    printf("Carry = %x\nOverflow = %x\nZero = %x\nSigned = %x\n", (Flags >> 3) & 0x1, (Flags >> 2) & 0x1, (Flags >> 1) & 0x1, (Flags & 0x1));
 }
 
 //NOP
 void nop(){
-    printf("antes de executar o nop");
+    printf("antes de executar o nop\n");
     statusSimulador();
-    printf("depois de executar o nop");
+    printf("depois de executar o nop\n");
 }
 
 //HALT
