@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-void statgit cusSimulador(){
+void statusSimulador(){
     //Imprimir os registradores
     printf("Registradores:\n");
     for(int i = 0; i < 8; i++){
