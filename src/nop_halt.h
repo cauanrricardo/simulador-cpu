@@ -30,7 +30,7 @@ void statusSimulador(){
 
     printf("\n");
     printf("Flags:\n");
-    printf("Carry = %x\nOverflow = %x\nZero = %x\nSigned = %x\n", (Flags >> 3) & 0x1, (Flags >> 2) & 0x1, (Flags >> 1) & 0x1, (Flags & 0x1));
+    printf("Carry = %x\nOverflow = %x\nZero = %x\nSigned = %x\n", (Flags >> 12) & 0x1, (Flags >> 8) & 0x1, (Flags >> 4) & 0x1, (Flags & 0x1));
 }
 
 //NOP

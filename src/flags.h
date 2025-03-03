@@ -1,6 +1,20 @@
 #include "../src/globais.h"
 
-void atualizar_flags_zero_signal(uint16_t resultado) {
+void atualizar_flags(uint16_t op1, uint16_t op2, uint16_t resultado) {
+    if (((op1 & 0x8000) == (op2 & 0x8000)) && ((op1 & 0x8000) != (resultado & 0x8000))) {
+        // Se os bits de sinal dos operandos forem iguais e o bit de sinal do resultado for diferente
+        // então houve um overflow
+        Flags = Flags | (1 << 8); // Setando a flag de overflow (O) para 1
+    } else {
+        Flags = Flags & ~(1 << 8); // Caso contrário, resetando a flag de overflow (O)
+    }
+
+    if(resultado > TAMANHO_DA_MEMORIA){
+        Flags = Flags | (1 << 12); // Setando a flag de carry (C) para 1
+    }
+    else{
+       Flags = Flags & ~(1 << 12); //Caso contrário, resetando a flag de Carry (C)
+    }
     // flag zero (z)
     if (resultado == 0) {
         Flags = Flags | (1 << 4); // z == 1
